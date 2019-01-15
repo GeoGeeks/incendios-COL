@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no">
+    <title>Intro to MapView - Create a 2D map - 4.10</title>
+    <style>
+        html,
+        body,
+        #viewDiv {
+            padding: 0;
+            margin: 0;
+            height: 100%;
+            width: 100%;
+        }
+    </style>
+
+    <link rel="stylesheet" href="https://js.arcgis.com/4.10/esri/css/main.css">
+    <script src="https://js.arcgis.com/4.10/"></script>
+
+    <script>
+        require([
+            "esri/Map",
+            "esri/views/MapView",
+            "esri/layers/TileLayer",
+            "esri/layers/MapImageLayer"
+        ], function(Map, MapView, TileLayer, MapImageLayer) {
+
+
+            // var renderer = {
+            //     type: "simple",  // autocasts as new SimpleRenderer()
+            //     symbol: defaultSym,  // the default symbol defined in step 1
+            //     label: "% population in poverty by county",  // label for the legend
+            //     visualVariables: [{
+            //         type: "color",
+            //         stops: [
+            //             {
+            //                 value: 10,
+            //                 color: "#FFFCD4",
+            //                 label: "10% or lower"
+            //             }, {
+            //                 value: 0.3,  // features where > 30% of the pop in poverty
+            //                 color: "#350242", // will be assigned this color (purple)
+            //                 label: "30% or higher"  // label to display in the legend
+            //             }]
+            //
+            //         // features with values between 0.1 - 0.3 will be assigned
+            //         // a color on a ramp between beige and purple proportional
+            //         // to where the value falls between 0.1 and 0.3
+            //
+            //     }]
+            // };
+
+
+            var specs = [{
+                id: 0,
+                visible: true
+            }];
+            for (var i=1;i<=11;i++) {
+                specs.push({
+                    id: i,
+                    visible: false
+                })
+            }
+
+            var layer = new MapImageLayer({
+                url: "http://geoapps.esri.co/arcgis/rest/services/incendios/M6_2014/MapServer",
+                sublayers: specs
+            });
+
+            var map = new Map({
+                basemap: "gray",
+            });
+
+            var view = new MapView({
+                container: "viewDiv",
+                map: map,
+                zoom: 4,
+                center: [-74, 1] // longitude, latitude
+            });
+
+            map.add(layer);
+
+            setTimeout(function() {
+                console.log('Starting yooo');
+                id = 1;
+                var timer = setInterval(renderFires, 750);
+                function renderFires() {
+                    if(id === 11) {
+                        clearInterval(timer);
+                        return;
+                    }
+                    // layer.findSublayerById(id-1).visible = false;
+                    layer.findSublayerById(id).visible = true;
+                    console.log(id);
+                    id++;
+                }
+            }, 5000);
+
+        });
+    </script>
+</head>
+
+<body>
+<div id="viewDiv"></div>
+</body>
+</html>
